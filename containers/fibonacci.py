@@ -92,11 +92,17 @@ class FibIter:
         self.s = 1
 
     def __next__(self):
-        if self.n is None:
-            return self.result
-        if self.i >= self.n:
-            raise StopIteration
+        if self.n:
+            if self.i >= self.n:
+                raise StopIteration
+            else:
+                result = self.result
+                self.result += self.s
+                self.i += 1
+                self.s = self.result - self.s
+                return self.result
         else:
+            result = self.result
             self.result += self.s
             self.i += 1
             self.s = self.result - self.s
