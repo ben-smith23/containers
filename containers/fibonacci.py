@@ -96,13 +96,11 @@ class FibIter:
             if self.i >= self.n:
                 raise StopIteration
             else:
-                result = self.result
                 self.result += self.s
                 self.i += 1
                 self.s = self.result - self.s
                 return self.result
         else:
-            result = self.result
             self.result += self.s
             self.i += 1
             self.s = self.result - self.s
