@@ -190,9 +190,6 @@ class BinaryTree():
     @staticmethod
     def __len__helper(node):
         '''
-        FIXME:
-        Implement this function.
-
         HINT:
         The pseudocode is:
         add 1 for the current node;
@@ -202,6 +199,14 @@ class BinaryTree():
         on the right child;
         return the sum of these three steps
         '''
+        curr = 0
+        if node:
+            curr = 1
+            left = BinaryTree.__len__helper(node.left)
+            right = BinaryTree.__len__helper(node.right)
+            return sum([curr, int(left), int(right)])
+        else:
+            return curr
 
     def height(self):
         '''
@@ -215,6 +220,7 @@ class BinaryTree():
         HINT:
         See how the __len__ method calls its helper staticmethod.
         '''
+        return BinaryTree._height(self.root)
 
     @staticmethod
     def _height(node):
@@ -229,3 +235,9 @@ class BinaryTree():
         return 1 (for the current node) plus the max of the left and
         right _heights calculated above
         '''
+        if node is None:
+            return -1
+        else:
+            left = BinaryTree._height(node.left)
+            right = BinaryTree._height(node.right)
+            return 1 + max(left, right)
