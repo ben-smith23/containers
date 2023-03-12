@@ -22,9 +22,6 @@ class BST(BinaryTree):
         then each element of xs needs to be inserted into the BST.
         '''
         super().__init__()
-        if xs is not None:
-            for x in xs:
-                self.insert(x)
 
     def __repr__(self):
         '''
@@ -73,14 +70,16 @@ class BST(BinaryTree):
         You should use the _ prefixed methods because those are static
         methods just like this one.
         '''
+        if node is None:
+            return True
         ret = True
         if node.left:
-            if node.value >= BST._find_smallest(node.left.value):
+            if node.value >= BST._find_largest(node.left):
                 ret &= BST._is_bst_satisfied(node.left)
             else:
                 ret = False
         if node.right:
-            if node.value <= node.right.value:
+            if node.value <= BST._find_smallest(node.right):
                 ret &= BST._is_bst_satisfied(node.right)
             else:
                 ret = False
@@ -97,6 +96,26 @@ class BST(BinaryTree):
         Create a staticmethod helper function following the pattern
         of _is_bst_satisfied.
         '''
+        if self.root:
+            return BST._insert(value, self.root)
+        else:
+            self.root = Node(value)
+        self.root - self.root + 1
+
+    @staticmethod
+    def _insert(node):
+        ret = True
+        if node.left:
+            if node.value >= BST._find_smallest(node.left):
+                ret &= BST._insert(node.left)
+            else:
+                ret = False
+        if node.right:
+            if node.value <= node.right.value:
+                ret &= BST._insert(node.right)
+            else:
+                ret = False
+        return ret
 
     def insert_list(self, xs):
         '''
@@ -191,6 +210,7 @@ class BST(BinaryTree):
         HINT:
         Use a recursive helper function.
         '''
+        '''
         if currentNode.isLeaf(): #leaf
             if currentNode == currentNode.parent.leftChild:
                 currentNode.parent.leftChild = None
@@ -226,6 +246,7 @@ class BST(BinaryTree):
                                                 currentNode.rightChild.payload,
                                                 currentNode.rightChild.leftChild,
                                                 currentNode.rightChild.rightChild)
+        '''
 
     def remove_list(self, xs):
         '''
