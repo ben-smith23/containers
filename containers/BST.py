@@ -45,6 +45,10 @@ class BST(BinaryTree):
         '''
         return type(self).__name__ + '(' + str(self.to_list('inorder')) + ')'
 
+    def __iter__(self):
+        for value in super().__iter__():
+            yield value
+
     def is_bst_satisfied(self):
         '''
         Whenever you implement a data structure,
@@ -227,12 +231,11 @@ class BST(BinaryTree):
         '''
         if self.root:
             return BST._remove(value, self.root)
-        else:
-            self.root = Node(value)
 
     @staticmethod
     def _remove(value, node):
-        pass
+        if node is None:
+            return None
 
     def remove_list(self, xs):
         '''

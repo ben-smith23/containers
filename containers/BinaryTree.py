@@ -63,6 +63,15 @@ class BinaryTree():
         '''
         return str(self.root)
 
+    def __iter__(self):
+        return self.iterate(self.root)
+
+    def iterate(self, node):
+        if node:
+            yield from self.iterate(node.left)
+            yield node.value
+            yield from self.iterate(node.right)
+
     def print_tree(self, traversal_type):
         '''
         There are three primary types of tree traversals:
