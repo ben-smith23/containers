@@ -229,28 +229,23 @@ class BST(BinaryTree):
         HINT:
         Use a recursive helper function.
         '''
-        if self.root:
-            return BST._remove(value, self.root)
+        self.root = BST._remove(self.root, value)
 
     @staticmethod
-    def _remove(value, node):
+    def _remove(node, value):
         if node is None:
-            return None
+            return node
         if value < node.value:
-            node.left = BST._remove(value, node.left)
+            node.left = BST._remove(node.left, value)
         elif value > node.value:
-            node.right = BST._remove(value, node.right)
-        else:  # value == node.value
-            if node.left is None and node.right is None:  # node is a leaf
-                return None
-            elif node.left is None:  # node has only right child
+            node.right = BST._remove(node.right, value)
+        else:
+            if node.left is None:
                 return node.right
-            elif node.right is None:  # node has only left child
+            elif node.right is None:
                 return node.left
-            else:  # node has two children
-                min_node = BST._find_smallest(node.right)
-                node.value = min_node.value
-                node.right = BST._remove(min_node.value, node.right)
+            node.value = BST._find_smallest(node.right)
+            node.right = BST._remove(node.right, node.value)
         return node
 
     def remove_list(self, xs):
@@ -264,4 +259,4 @@ class BST(BinaryTree):
         See the insert_list function.
         '''
         for x in xs:
-            return self.remove(x)
+            self.remove(x)
