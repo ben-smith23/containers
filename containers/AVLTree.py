@@ -80,6 +80,29 @@ class AVLTree(BST):
         different from our class hierarchy,
         however, so you will have to adapt their code.
         '''
+        '''
+        if node.right is None:
+            return newroot
+        else:
+            newroot = node.right
+            node.right = newroot.left
+            newroot.left = node
+            node.height = 1 + max(BinaryTree._height(node.left),
+            BinaryTree._height(node.right))
+            newroot.height = 1 + max(BinaryTree._height(newroot.left),
+            BinaryTree._height(newroot.right))
+            return newroot
+        '''
+        ogroot = node
+        if ogroot.right:
+            newroot = Node(ogroot.right.value)
+            newroot.left = Node(ogroot.value)
+            newroot.right = ogroot.right.right
+            newroot.left.left = ogroot.left
+            newroot.left.right = ogroot.right.left
+            return newroot
+        else:
+            return ogroot
 
     @staticmethod
     def _right_rotate(node):
@@ -93,6 +116,27 @@ class AVLTree(BST):
         different from our class hierarchy,
         however, so you will have to adapt their code.
         '''
+        '''
+        newroot = node.left
+        if node.right is not None:
+            node.left = newroot.right
+        newroot.right = node
+        node.height = 1 + max(BinaryTree._height(node.right),
+        BinaryTree._height(node.left))
+        newroot.height = 1 + max(BinaryTree._height(newroot.right),
+        BinaryTree._height(newroot.left))
+        return newroot
+        '''
+        ogroot = node
+        if ogroot.left:
+            newroot = Node(ogroot.left.value)
+            newroot.right = Node(ogroot.value)
+            newroot.left = ogroot.left.left
+            newroot.right.right = ogroot.right
+            newroot.right.left = ogroot.left.right
+            return newroot
+        else:
+            return ogroot
 
     def insert(self, value):
         '''
@@ -116,17 +160,18 @@ class AVLTree(BST):
             return AVLTree._insert(value, self.root)
         else:
             self.root = Node(value)
+        self._rebalance(self.root)
 
     @staticmethod
     def _insert(value, node):
         ret = False
-        if value < node.value:
+        if value < node.value and AVLTree._balance_factor in [-1, 0, 1]:
             if node.left:
                 ret &= AVLTree._insert(value, node.left)
             else:
                 node.left = Node(value)
                 ret = True
-        elif value > node.value:
+        elif value > node.value and AVLTree._balance_factor in [-1, 0, 1]:
             if node.right:
                 ret &= AVLTree._insert(value, node.right)
             else:
@@ -142,3 +187,14 @@ class AVLTree(BST):
         But both the insert function needs the rebalancing code,
         so I recommend including that code here.
         '''
+        if node:
+            balance_factor = AVLTree._balance_factor(node)
+        if balance_factor > 1:
+            if AVLTree._balance_factor(node.left) < 0:
+                node.left = AVLTree._right_rotate(node.right)
+            node = AVLTree._left_rotate(node)
+        elif balance_factor < -1:
+            if AVLTree._balance_factor(node.right) > 0:
+                node.right = AVLTree._right_rotate(node.right)
+            node = AVLTree._left_rotate(node)
+        return node
