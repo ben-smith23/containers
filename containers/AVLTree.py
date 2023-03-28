@@ -164,6 +164,7 @@ class AVLTree(BST):
 
     @staticmethod
     def _insert(value, node):
+        '''
         ret = False
         if value < node.value and AVLTree._balance_factor in [-1, 0, 1]:
             if node.left:
@@ -171,13 +172,44 @@ class AVLTree(BST):
             else:
                 node.left = Node(value)
                 ret = True
+        elif AVLTree._balance_factor not in [-1, 0, 1]:
+            AVLTree._rebalance(node)
         elif value > node.value and AVLTree._balance_factor in [-1, 0, 1]:
             if node.right:
                 ret &= AVLTree._insert(value, node.right)
             else:
                 node.right = Node(value)
                 ret = True
+        elif AVLTree._balance_factor not in [-1, 0, 1]:
+            AVLTree._rebalance(node)
         return ret
+        '''
+        if value < node.value:
+            if node.left:
+                AVLTree._insert(value, node.left)
+            else:
+                node.left = Node(value, node)
+                AVLTree.updateBalance(node.left)
+        else:
+            if node.right:
+                AVLTree._insert(value, node.right)
+            else:
+                node.right = Node(value, node)
+                AVLTree.updateBalance(node.right)
+
+    @staticmethod
+    def updateBalance(node):
+        balance_factor = AVLTree._balance_factor(node)
+        if balance_factor > 1 or balance_factor < -1:
+            AVLTree._rebalance(node)
+            return
+        if node is not None:
+            if node.left():
+                balance_factor += 1
+            elif node.right():
+                balance_factor -= 1
+            if balance_factor != 0:
+                AVLTree.updateBalance(node)
 
     @staticmethod
     def _rebalance(node):
