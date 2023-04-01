@@ -70,10 +70,12 @@ class Heap(BinaryTree):
         Implement this method.
         '''
         if node.left:
-            if node.left.value < node.value or not Heap._is_heap_satisfied(node.left):
+            if node.left.value < node.value or \
+                    not Heap._is_heap_satisfied(node.left):
                 return False
         if node.right:
-            if node.right.value < node.value or not Heap._is_heap_satisfied(node.right):
+            if node.right.value < node.value or \
+                    not Heap._is_heap_satisfied(node.right):
                 return False
         return True
 
@@ -101,6 +103,27 @@ class Heap(BinaryTree):
         following the same pattern used in the BST and AVLTree
         insert functions.
         '''
+        if self.root:
+            return Heap._insert(value, self.root)
+        else:
+            self.root = Node(value)
+
+    @staticmethod
+    def _insert(value, node):
+        ret = False
+        if value < node.value:
+            if node.left:
+                ret &= Heap._insert(value, node.left)
+            else:
+                node.left = Node(value)
+                ret = True
+        elif value > node.value:
+            if node.right:
+                ret &= Heap._insert(value, node.right)
+            else:
+                node.right = Node(value)
+                ret = True
+        return ret
 
     def insert_list(self, xs):
         '''
@@ -109,6 +132,8 @@ class Heap(BinaryTree):
         FIXME:
         Implement this function.
         '''
+        for x in xs:
+            return self.insert(x)
 
     def find_smallest(self):
         '''
@@ -117,6 +142,18 @@ class Heap(BinaryTree):
         FIXME:
         Implement this function.
         '''
+        if self.root is None:
+            raise ValueError('Nothing in tree')
+        else:
+            return Heap._find_smallest(self.root)
+
+    @staticmethod
+    def _find_smallest(node):
+        assert node is not None
+        if node.left is None:
+            return node.value
+        else:
+            return Heap._find_smallest(node.left)
 
     def remove_min(self):
         '''
