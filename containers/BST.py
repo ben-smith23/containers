@@ -48,7 +48,7 @@ class BST(BinaryTree):
     def __iter__(self):
         for value in super().__iter__():
             yield value
-    
+
     def __eq__(self, t2):
         '''
         This method checks to see if the contents of self and t2 are equal.
@@ -79,7 +79,7 @@ class BST(BinaryTree):
                 return False
         else:
             return False
-    
+
     def is_bst_satisfied(self):
         '''
         Whenever you implement a data structure,
