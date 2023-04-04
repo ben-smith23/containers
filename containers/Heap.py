@@ -29,9 +29,10 @@ class Heap(BinaryTree):
         then each element of xs needs to be inserted into the Heap.
         '''
         super().__init__()
+        self.root = None
+        self.num_nodes = 0
         if xs is not None:
-            for x in xs:
-                self.insert(x)
+            self.insert_list(xs)
 
     def __repr__(self):
         '''
@@ -103,27 +104,30 @@ class Heap(BinaryTree):
         following the same pattern used in the BST and AVLTree
         insert functions.
         '''
-        if self.root:
-            return Heap._insert(value, self.root)
-        else:
+        self.num_nodes += 1
+        binary_str = bin(self.num_nodes)[3:]
+
+        if self.root is None:
             self.root = Node(value)
+        else:
+            Heap._insert(self.root, value, binary_str)
 
     @staticmethod
-    def _insert(value, node):
-        ret = False
-        if value < node.value:
-            if node.left:
-                ret &= Heap._insert(value, node.left)
-            else:
+    def _insert(node, value, binary_str):
+        if binary_str[0] == '0':
+            if len(binary_str) == 1:
                 node.left = Node(value)
-                ret = True
-        elif value > node.value:
-            if node.right:
-                ret &= Heap._insert(value, node.right)
             else:
+                Heap._insert(node.left, value, binary_str[1:])
+            if node.value > node.left.value:
+                node.value, node.left.value = node.left.value, node.value
+        if binary_str[0] == '1':
+            if len(binary_str) == 1:
                 node.right = Node(value)
-                ret = True
-        return ret
+            else:
+                Heap._insert(node.right, value, binary_str[1:])
+            if node.value > node.right.value:
+                node.value, node.right.value = node.right.value, node.value
 
     def insert_list(self, xs):
         '''
@@ -133,7 +137,7 @@ class Heap(BinaryTree):
         Implement this function.
         '''
         for x in xs:
-            return self.insert(x)
+            self.insert(x)
 
     def find_smallest(self):
         '''
@@ -145,15 +149,7 @@ class Heap(BinaryTree):
         if self.root is None:
             raise ValueError('Nothing in tree')
         else:
-            return Heap._find_smallest(self.root)
-
-    @staticmethod
-    def _find_smallest(node):
-        assert node is not None
-        if node.left is None:
-            return node.value
-        else:
-            return Heap._find_smallest(node.left)
+            return self.root.value
 
     def remove_min(self):
         '''
@@ -177,3 +173,47 @@ class Heap(BinaryTree):
         but I personally found dividing up the code into two made
         the most sense.
         '''
+        if self.root is None:
+            return self.root
+        if self.root.left is None and self.root.right is None:
+            self.root = None
+            return self.root
+        # Find the bottom right node
+        curr_node = self.root
+        while curr_node.left is not None or curr_node.right is not None:
+            if curr_node.right is None:
+                curr_node = curr_node.left
+            elif curr_node.left is None or\
+                    curr_node.left.value < curr_node.right.value:
+                curr_node = curr_node.left
+            else:
+                curr_node = curr_node.right
+        # Swap the bottom right node with the root node
+        self.root.value = curr_node.value
+        # Remove the bottom right node
+        Heap._remove_bottom_right(curr_node)
+        Heap._trickle(self.root)
+
+    @staticmethod
+    def _remove_bottom_right(node):
+        if node.right is None:
+            return node.left
+        node.right = Heap._remove_bottom_right(node.right)
+        return node
+
+    @staticmethod
+    def _trickle(node):
+        if node.left is None:
+            return
+        elif node.right is None or node.left.value < node.right.value:
+            if node.left.value < node.value:
+                node.value, node.left.value = node.left.value, node.value
+                Heap._trickle(node.left)
+            else:
+                return
+        else:
+            if node.right.value < node.value:
+                node.value, node.right.value = node.right.value, node.value
+                Heap._trickle(node.right)
+            else:
+                return
