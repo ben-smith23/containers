@@ -175,36 +175,36 @@ class Heap(BinaryTree):
         '''
         if self.root is None:
             return self.root
-        if self.root.left is None and self.root.right is None:
-            self.root = None
-            return self.root
-        # Find the bottom right node
-        curr_node = self.root
-        while curr_node.left is not None or curr_node.right is not None:
-            if curr_node.right is None:
-                curr_node = curr_node.left
-            elif curr_node.left is None or\
-                    curr_node.left.value < curr_node.right.value:
-                curr_node = curr_node.left
+        binary_str = bin(self.num_nodes)[3:]
+        node = self.root
+        parent = None
+        for digit in binary_str:
+            parent = Node(node.value)
+            if digit == '0':
+                node = node.left
             else:
-                curr_node = curr_node.right
-        # Swap the bottom right node with the root node
-        self.root.value = curr_node.value
-        # Remove the bottom right node
-        Heap._remove_bottom_right(curr_node)
+                node = node.right
+        self.root.value = node.value
+        Heap._remove_bottom_right(node, parent)
         Heap._trickle(self.root)
 
     @staticmethod
-    def _remove_bottom_right(node):
-        if node.right is None:
-            return node.left
-        node.right = Heap._remove_bottom_right(node.right)
-        return node
+    def _remove_bottom_right(node, parent):
+        if parent is None:
+            return node
+        if parent.right is None:
+            return parent.left
+        if parent.right.right is None:
+            removed_node = parent.right
+            parent.right = None
+            return removed_node
+        else:
+            return Heap._remove_bottom_right(node, parent.right)
 
     @staticmethod
     def _trickle(node):
         if node.left is None:
-            return
+            return node
         elif node.right is None or node.left.value < node.right.value:
             if node.left.value < node.value:
                 node.value, node.left.value = node.left.value, node.value
