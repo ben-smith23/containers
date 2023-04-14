@@ -152,30 +152,10 @@ class Heap(BinaryTree):
             return self.root.value
 
     def remove_min(self):
-        '''
-        Removes the minimum value from the Heap.
-        If the heap is empty, it does nothing.
-
-        FIXME:
-        Implement this function.
-
-        HINT:
-        The pseudocode is
-        1. remove the bottom right node from the tree
-        2. replace the root node with what was formerly the bottom right
-        3. "trickle down" the root node: recursively swap it with its largest
-        child until the heap property is satisfied
-
-        HINT:
-        I created two @staticmethod helper functions: _remove_bottom_right
-        and _trickle.
-        It's possible to do it with only a single helper (or no helper at all),
-        but I personally found dividing up the code into two made
-        the most sense.
-        '''
+        binary_str = bin(self.num_nodes)[3:]
+        self.num_nodes -= 1
         if self.root is None:
             return self.root
-        binary_str = bin(self.num_nodes)[3:]
         node = self.root
         parent = None
         for digit in binary_str:
@@ -194,16 +174,17 @@ class Heap(BinaryTree):
             return node
         if parent.right is None:
             return parent.left
-        if parent.right.right is None:
-            removed_node = parent.right
-            parent.right = None
-            return removed_node
         else:
-            return Heap._remove_bottom_right(node, parent.right)
+            if parent.right.right is None:
+                removed_node = parent.right
+                parent.right = None
+                return removed_node
+            else:
+                return Heap._remove_bottom_right(node, parent.right)
 
     @staticmethod
     def _trickle(node):
-        if node.left is None:
+        if node.left is None and node.right is None:
             return node
         elif node.right is None or node.left.value < node.right.value:
             if node.left.value < node.value:
@@ -217,3 +198,4 @@ class Heap(BinaryTree):
                 Heap._trickle(node.right)
             else:
                 return
+
